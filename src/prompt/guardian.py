@@ -1,8 +1,3 @@
-import json
-
-from src.conf.data_model.control import InputValidation
-
-
 class GuardianPrompt:
     def __init__(self):
         self.system_description = f"Act as a guardian whose task is assessing whether or not the prompt is food related."

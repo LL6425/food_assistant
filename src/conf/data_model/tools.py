@@ -7,8 +7,8 @@ from pydantic import BaseModel
 from src.conf.data_model.llm import StructOutput
 from src.conf.data_model.output import Recipe, Text
 
-class Tool(StructOutput):
 
+class Tool(StructOutput):
     name: str = None
     description: str = None
 
@@ -22,22 +22,21 @@ class Tool(StructOutput):
 
     @abstractmethod
     def __call__(self, inp: BaseModel):
-
         pass
 
     def get_input_structure(self) -> Tuple[Type[BaseModel], Dict]:
-
         parameters = inspect.signature(self.__call__).parameters
 
-        assert list(parameters.keys()) == ['inp'], "Tool call method must follow the (self, inp: BaseModel) arguments convention"
+        assert (
+            list(parameters.keys()) == ["inp"]
+        ), "Tool call method must follow the (self, inp: BaseModel) arguments convention"
 
-        input_model: BaseModel = parameters['inp'].annotation
+        input_model: BaseModel = parameters["inp"].annotation
 
         return input_model, input_model.model_json_schema()
-    
+
 
 class ToolLLM(Tool):
-
     def __init__(self, client, model: str):
         Tool.__init__(self)
 
@@ -45,14 +44,12 @@ class ToolLLM(Tool):
         self.model = model
 
     def __call__(self, inp: BaseModel):
-
         pass
 
 
 class RecipeSuggest(ToolLLM):
-
-    description = 'Tool designed to suggest recipes'
-    name = 'recipe_suggest'
+    description = "Tool designed to suggest recipes"
+    name = "recipe_suggest"
     output_structure = Recipe
 
     def __init__(self, client, model: str):
@@ -60,13 +57,12 @@ class RecipeSuggest(ToolLLM):
 
     @abstractmethod
     def __call__(self, inp: Text) -> Recipe:
-
         pass
 
-class ChatBot(ToolLLM):
 
-    description = 'Tool designed to provide generic food related answers'
-    name = 'food_chatbot'
+class ChatBot(ToolLLM):
+    description = "Tool designed to provide generic food related answers"
+    name = "food_chatbot"
     output_structure = Text
 
     def __init__(self, client, model: str):
@@ -74,5 +70,4 @@ class ChatBot(ToolLLM):
 
     @abstractmethod
     def __call__(self, inp: Text) -> Text:
-
         pass
