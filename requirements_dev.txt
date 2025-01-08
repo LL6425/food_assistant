@@ -1,2 +1,2 @@
-ruff
+pydantic
 groq
