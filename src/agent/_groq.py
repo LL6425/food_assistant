@@ -48,9 +48,10 @@ class GroqFoodAssistant(FoodAssistant):
             .message.content
         )
 
-        answer = pipeline.execute(tools_d=self.tools_d)  # as text
+        answer = pipeline.execute(tools_d=self.tools_d).as_text()
 
-        print(1)
+        print(answer)
+        self.history.append({"role": "assistant", "content": answer})
 
 
 if __name__ == "__main__":
@@ -58,13 +59,12 @@ if __name__ == "__main__":
 
     from src.llm._groq import GroqRecipeSuggest, GroqChatBot
     from src.prompt.guardian import GuardianPrompt
-    from src.conf.data_model.output import Recipe
 
     gfa = GroqFoodAssistant(
         api_key=os.environ["GROQ_API_KEY"],
         guardian=GroqGuardian(guardian_prompt=GuardianPrompt()),
         system=SystemPrompt(),
-        tools=[GroqRecipeSuggest, GroqChatBot],
+        tools=[GroqRecipeSuggest, GroqChatBot]
     )
 
-    gfa.execute("Provide lasagne recipe")
+    gfa.execute("Provide a weekly meal planning composed by seven days with three meals(breakfast, lunch, dinner) each day")
